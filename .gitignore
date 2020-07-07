@@ -1,2 +1,7 @@
 .vagrant
+.shadow-cljs
+node_modules
+*~
 ubuntu-bionic-18.04-cloudimg-console.log
+target
+public/js

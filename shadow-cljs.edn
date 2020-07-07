@@ -1,0 +1,22 @@
+{:source-paths ["src/main" "src/test"]
+ :dependencies [[macchiato/core "0.2.18"]
+                [macchiato/env "0.0.6"]
+                [macchiato/hiccups "0.4.1"]
+                [bidi "2.1.6"]
+                [reagent "1.0.0-alpha2"]
+                [pjstadig/humane-test-output "0.10.0"]
+                [cljs-node-io "1.1.2"]]
+ :builds {:server {:target :node-script
+                   :output-to "target/main.js"
+                   :main server.main/main!
+                   :devtools {:after-load server.main/reload!}
+                   :release {:compiler-options {:optimizations :simple}
+                             :output-to "release/main.js"}}
+          :test {:target :node-test
+                   :output-to "target/tests/tests.js"
+                   :autorun true}
+          :client {:target :browser
+                   :output-dir "public/js"
+                   :asset-path "/js"
+                   :modules {:client {:entries [client.main]}}
+                   :release {:output-dir "release/public/js"}}}}

@@ -1,0 +1,29 @@
+{
+    "name": "minimum-macchiato",
+    "version": "0.1.0",
+    "description": "A minimal implementation of Macchiato with Reagent/Material.",
+    "main": "index.js",
+    "scripts": {
+        "server-tests": "node target/tests/server-tests.js",
+        "watch-tests": "watch 'npm run server-tests' ./target/tests"
+    },
+    "author": "Mason Vines",
+    "license": "MIT",
+    "devDependencies": {
+        "shadow-cljs": "^2.8.39",
+        "source-map-support": "^0.5.12",
+        "watch": "^1.0.2"
+    },
+    "dependencies": {
+        "concat-stream": "^2.0.0",
+        "cookies": "^0.8.0",
+        "etag": "^1.8.1",
+        "multiparty": "^4.2.1",
+        "qs": "^6.9.4",
+        "random-bytes": "^1.0.0",
+        "react": "16.13.0",
+        "react-dom": "16.13.0",
+        "simple-encryptor": "^3.0.0",
+        "xregexp": "^4.3.0"
+    }
+}

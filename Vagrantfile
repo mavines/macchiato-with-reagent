@@ -65,14 +65,16 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-	apt update
+  config.vm.provision "shell", inline: <<-SHELL, privileged: false
+	sudo apt update
 	sudo add-apt-repository ppa:kelleyk/emacs -y
-	curl -sL https://deb.nodesource.com/setup_14.x | bash -
-	apt-get install -y nodejs
-	apt-get install -y emacs26
-	apt-get install -y linux-image-extra-virtual
-	apt install -y openjdk-11-jre-headless
-	npm install -g shadow-cljs
+	sudo curl -sL https://deb.nodesource.com/setup_14.x | bash -
+	sudo apt-get install -y nodejs
+	sudo apt-get install -y emacs26
+	sudo apt-get install -y linux-image-extra-virtual
+	sudo apt install -y openjdk-11-jre-headless
+	sudo npm install -g shadow-cljs
+	curl -L https://git.io/epre | sh
+	sed -i "s/;; (require 'prelude-clojure)/(require 'prelude-clojure)/g" /home/vagrant/.emacs.d/personal/prelude-modules.el
   SHELL
  end
