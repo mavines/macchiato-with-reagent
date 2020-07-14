@@ -40,6 +40,32 @@
     (swap! *todos assoc @*id {:id @*id :title text :done false})
     (todos req res raise)))
 
+(defn edit-title [req res raise]
+  (let [{:keys [id title]} (reader/read-string (request/body-string req))]
+    (swap! *todos assoc-in [id :title] title)
+    (todos req res raise)))
+
+(defn delete-todo [req res raise]
+  (let [id (reader/read-string (request/body-string req))]
+    (swap! *todos dissoc id)
+    (todos req res raise)))
+
+(defn toggle-todo [req res raise]
+  (let [id (reader/read-string (request/body-string req))]
+    (swap! *todos update-in [id :done] not)
+    (todos req res raise)))
+
+(defn mmap [m f a] (->> m (f a) (into (empty m))))
+(defn complete-all [req res raise]
+  (let [complete (reader/read-string (request/body-string req))]
+    (swap! *todos mmap map #(assoc-in % [1 :done] complete))
+    (todos req res raise)))
+
+
+(defn clear-done [req res raise]
+  (swap! *todos mmap remove #(get-in % [1 :done]))
+  (todos req res raise))
+
 (defn not-found [req res raise]
   (-> (html
        [:html
@@ -51,8 +77,13 @@
 
 (def routes
   ["/" {"" {:get home}
-        "todos" {:get todos
-                 :post new-todo}}])
+        "todos" {:get todos}
+        "edit" {:put edit-title}
+        "add" {:post new-todo}
+        "delete" {:put delete-todo}
+        "toggle" {:put toggle-todo}
+        "complete-all" {:put complete-all}
+        "clear-done" {:put clear-done}}])
 
 (defn router [req res raise]
   (if-let [{:keys [handler route-params]} (bidi/match-route* routes (:uri req) req)]

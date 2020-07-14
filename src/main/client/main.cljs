@@ -14,21 +14,46 @@
 (defn af-post [url data]
   (http/post url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
 
-(defn parse-todo [response]
+(defn af-put [url data]
+  (http/put url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
+
+(defn af-delete [url data]
+  (http/delete url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
+
+(defn parse-todos [response]
   (:body response))
 
 (defn add-todo [text]
-  (go (let [response (<! (af-post "/todos" {:body {:title text}}))
-            updated-todos (parse-todo response)]
+  (go (let [response (<! (af-post "/add" {:body {:title text}}))
+            updated-todos (parse-todos response)]
         (reset! todos updated-todos))))
 
-(defn toggle [id] (swap! todos update-in [id :done] not))
-(defn save [id title] (swap! todos assoc-in [id :title] title))
-(defn delete [id] (swap! todos dissoc id))
+(defn toggle [id]
+  (go (let [response (<! (af-put "/toggle" {:body id}))
+            updated-todos (parse-todos response)]
+        (reset! todos updated-todos))))
+
+
+(defn save [id title]
+  (go (let [response (<! (af-put "/edit" {:body {:id id :title title}}))
+            updated-todos (parse-todos response)]
+        (reset! todos updated-todos))))
+
+(defn delete [id]
+  (go (let [response (<! (af-put "/delete" {:body id}))
+            updated-todos (parse-todos response)]
+        (reset! todos updated-todos))))
 
 (defn mmap [m f a] (->> m (f a) (into (empty m))))
-(defn complete-all [v] (swap! todos mmap map #(assoc-in % [1 :done] v)))
-(defn clear-done [] (swap! todos mmap remove #(get-in % [1 :done])))
+(defn complete-all [v]
+  (go (let [response (<! (af-put "/complete-all" {:body v}))
+            updated-todos (parse-todos response)]
+        (reset! todos updated-todos))))
+
+(defn clear-done []
+  (go (let [response (<! (af-put "/clear-done" {}))
+            updated-todos (parse-todos response)]
+        (reset! todos updated-todos))))
 
 (defonce init (do
                 (add-todo "Rename Cloact to Reagent")
