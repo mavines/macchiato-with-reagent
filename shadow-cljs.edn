@@ -2,6 +2,7 @@
  :dependencies [[macchiato/core "0.2.18"]
                 [macchiato/env "0.0.6"]
                 [macchiato/hiccups "0.4.1"]
+                [cljs-http "0.1.46"]
                 [bidi "2.1.6"]
                 [reagent "1.0.0-alpha2"]
                 [pjstadig/humane-test-output "0.10.0"]
