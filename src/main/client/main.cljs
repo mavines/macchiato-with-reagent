@@ -11,14 +11,17 @@
 
 (defonce *todos (r/atom (sorted-map)))
 
+(defn add-af-token [data]
+  (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken))
+
 (defn af-post [url data]
-  (http/post url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
+  (http/post url (add-af-token data)))
 
 (defn af-put [url data]
-  (http/put url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
+  (http/put url (add-af-token data)))
 
 (defn af-delete [url data]
-  (http/delete url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
+  (http/delete url (add-af-token data)))
 
 (defn parse-todos [response]
   (:body response))
