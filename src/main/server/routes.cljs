@@ -60,7 +60,7 @@
 
 (defn mmap [m f a] (->> m (f a) (into (empty m))))
 (defn complete-all [req res raise]
-  (let [complete (reader/read-string (request/body-string req))]
+  (let [complete (some? (reader/read-string (request/body-string req)))]
     (swap! *todos mmap map #(assoc-in % [1 :done] complete))
     (todos req res raise)))
 

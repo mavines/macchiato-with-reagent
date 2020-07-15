@@ -105,9 +105,10 @@
        [:div.view
         [:input.toggle {:type "checkbox"
                         :checked done
+                        :value done
                         :on-change #(toggle id)}]
         [:label {:on-double-click #(reset! editing true)} title]
-        [:button.destroy {:on-click #(delete id)} "X"]]
+        [:button.destroy {:on-click #(delete id)} ""]]
        (when @editing
          [todo-edit {:class "edit" :title title
                      :on-save #(save id %)
