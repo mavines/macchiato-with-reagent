@@ -8,6 +8,10 @@ vagrant up
 and you should be ready to go. The VM includes Emacs with Prelude installed.
 
 # Develop
+Install the NPM dependencies:
+```bash
+npm install
+```
 
 Build the server with hot reloading:
 ```bash
