@@ -15,6 +15,9 @@
   (let [af-token af/*anti-forgery-token*]
     (-> [:html
          [:head
+          [:link {:href "css/site.css"
+                  :rel "stylesheet"
+                  :type "text/css"}]
           [:meta {:name "viewport"
                   :content "minimum-scale=1, initial-scale=1, width=device-width"}]]
          [:body
