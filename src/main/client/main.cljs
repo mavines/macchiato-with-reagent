@@ -2,14 +2,14 @@
   (:require [cljsjs.react]
             [cljsjs.react.dom]
             [cljs.reader :as reader]
-            [clojure.string :as str]
+            [clojure.string :as string]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
             [reagent.core :as r :refer [atom]]
             [reagent.dom :as rdom])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defonce todos (r/atom (sorted-map)))
+(defonce *todos (r/atom (sorted-map)))
 
 (defn af-post [url data]
   (http/post url (assoc-in data [:headers "X-CSRF-token"] js/antiForgeryToken)))
@@ -26,34 +26,34 @@
 (defn add-todo [text]
   (go (let [response (<! (af-post "/add" {:body {:title text}}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 (defn toggle [id]
-  (go (let [response (<! (af-put "/toggle" {:body id}))
+  (go (let [response (<! (af-put (str "/toggle?id=" id) {}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 
 (defn save [id title]
   (go (let [response (<! (af-put "/edit" {:body {:id id :title title}}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 (defn delete [id]
   (go (let [response (<! (af-put "/delete" {:body id}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 (defn mmap [m f a] (->> m (f a) (into (empty m))))
 (defn complete-all [v]
   (go (let [response (<! (af-put "/complete-all" {:body v}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 (defn clear-done []
   (go (let [response (<! (af-put "/clear-done" {}))
             updated-todos (parse-todos response)]
-        (reset! todos updated-todos))))
+        (reset! *todos updated-todos))))
 
 (defonce init (do
                 (add-todo "Rename Cloact to Reagent")
@@ -66,7 +66,7 @@
   (let [val (r/atom title)
         stop #(do (reset! val "")
                   (if on-stop (on-stop)))
-        save #(let [v (-> @val str str/trim)]
+        save #(let [v (-> @val str string/trim)]
                 (if-not (empty? v) (on-save v))
                 (stop))]
     (fn [{:keys [id class placeholder]}]
@@ -103,7 +103,8 @@
       [:li {:class (str (if done "completed ")
                         (if @editing "editing"))}
        [:div.view
-        [:input.toggle {:type "checkbox" :checked done
+        [:input.toggle {:type "checkbox"
+                        :checked done
                         :on-change #(toggle id)}]
         [:label {:on-double-click #(reset! editing true)} title]
         [:button.destroy {:on-click #(delete id)} "X"]]
@@ -115,7 +116,7 @@
 (defn todo-app [props]
   (let [filt (r/atom :all)]
     (fn []
-      (let [items (vals @todos)
+      (let [items (vals @*todos)
             done (->> items (filter :done) count)
             active (- (count items) done)]
         [:div
@@ -128,7 +129,9 @@
           (when (-> items count pos?)
             [:div
              [:section#main
-              [:input#toggle-all {:type "checkbox" :checked (zero? active)
+              [:input#toggle-all {:type "checkbox"
+                                  :checked (zero? active)
+                                  :value (zero? active)
                                   :on-change #(complete-all (pos? active))}]
               [:label {:for "toggle-all"} "Mark all as complete"]
               [:ul#todo-list

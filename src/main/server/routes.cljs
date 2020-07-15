@@ -51,7 +51,7 @@
     (todos req res raise)))
 
 (defn toggle-todo [req res raise]
-  (let [id (reader/read-string (request/body-string req))]
+  (let [id (reader/read-string (get-in req [:params :id]))]
     (swap! *todos update-in [id :done] not)
     (todos req res raise)))
 
