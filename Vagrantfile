@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL, privileged: false
 	sudo apt update
 	sudo add-apt-repository ppa:kelleyk/emacs -y
-	sudo curl -sL https://deb.nodesource.com/setup_14.x | bash -
+	sudo curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 	sudo apt-get install -y nodejs
 	sudo apt-get install -y emacs26
 	sudo apt-get install -y linux-image-extra-virtual
